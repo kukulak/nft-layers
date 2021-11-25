@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Creator</title>
+    <style>
+        body{
+            background-color: rgb(0, 15, 27);
+            color: rgb(211, 217, 223);
+            font-family: Arial, Helvetica, sans-serif;
+
+        }
+        .grrid{
+            display: grid;
+            /* height: 100vh; */
+            width: 100vw;
+            grid-template-rows: auto;
+
+            /* align-content: center; */
+            /* justify-content: center; */
+            justify-items: center;
+
+        }
+
+        .subGroup{
+            display: grid;
+            /* height: 30vw;
+            width: 30vw; */
+            /* align-content: center; */
+            justify-content: center;
+            grid-template-columns: 33% 34% 33%;
+            justify-items: center;
+            justify-content: center;
+            
+
+        }
+
+        .grrid img{
+            /* grid-column: 1;
+            grid-row: 1; */
+            height: 120px;
+            width: 120px;
+        }
+        .square{
+            background-color: rgba(53, 53, 53, 0.295);
+        }
+        .layer, .group{
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+        hola NFT
+        <div class='grrid'>
+            {% if layer %}
+                {% for lay in layer %}
+                <div class="layer">
+                    <h1 class="cabezaLayer"> 
+                        {{ lay.layer_name }}
+                    </h1>
+                    <div class="group" style="z-index:{{ lay.zindex }}">
+                        {% for l in lay.compound.all %}
+                        <h2> 
+                            {{ l.compound_name }}
+                        </h2>
+                        
+                        {% for c in l.group_images.all %}
+                        <h3> 
+                            {{ c.groupImage_name }}
+                        </h3>
+                        <div class="subGroup">
+                            {% for i in c.layer_images.all %}
+                            <div class="square">
+                                <h4>{{i.image_name}}</h4>
+                                <img src='{{ i.upload_img.url }}' alt="">
+                                <p class="rarity">
+                                    {{ i.rarity }}
+                                </p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    
+                </div>
+                    {% endfor %}
+                    {% endif %}    
+                    
+                </div>
+            </body>
+</html>
