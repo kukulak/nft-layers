@@ -30,7 +30,7 @@ class groupImage(models.Model):
         return self.groupImage_name      
 
 
-class Efectos(models.Model):
+class Efecto(models.Model):
     efecto_name = models.CharField(max_length=200)
     efecto_description = models.TextField(blank=True)
     efecto_codigo = models.TextField(blank=True)

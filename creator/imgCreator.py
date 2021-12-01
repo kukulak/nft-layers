@@ -1,5 +1,7 @@
 from PIL import Image, ImageColor, ImageEnhance, ImageFilter, ImageOps
 
+from django.conf import settings
+
 # generate random integer values
 from numpy.random import seed
 from numpy.random import randint
@@ -10,91 +12,39 @@ import numpy as np
 # import cv2
  
 
+# get th names of the layers
+# get the compounds of the layers
+# get the groups of the compound
+# get the list of the images
 
 
-fondos = ['fondo-001.png', 'fondo-002.png', 'fondo-003.png']
-
-mascaras = ['masCara-Azul1.png', 'masCara-RED.png', 'masCara.png']
-
-# adornos = ['adorno0-00_mask.png', 'adorno0-001_mask.png', 'adorno0-003_mask.png', 'adorno0-004.png', 'adorno0-005.png', 'adorno0-006.png', 'adorno0-008.png', 'adorno0-009.png',  'adorno0-0010.png', 'adorno1-00.png', 'adorno1-001.png']
-
-# adornos = ['adorno0-00_mask.png', 'adorno0-001_mask.png', 'adorno1-001_mask.png']
 
 
-adornos = ['adorno0-00.png', 'adorno0-001.png', 'adorno0-003.png', 'adorno1-001.png']
+class FullImage(object):
+    pass
 
-colores = ['color', 'color1', 'color2']
-
-ojos = ['ojos1.png', 'ojos2.png', 'ojos3.png', 'ojos2.png']
-
-bocas = ['boca-001.png', 'boca-002.png', 'boca-001.png', 'boca-002.png']
+fi = FullImage()
+# >>> class Foo(object):
+# ...     pass
+# ... 
+# >>> foo = Foo()
+# >>> foo.a = 3
+# >>> Foo.b = property(lambda self: self.a + 1)
+# >>> foo.b
+# 4
 
 FileSize = (2001, 2001)
 position = (0, 0)
-#layer un layer definir primero un layer con sus variables
 theImage = Image.new('RGBA', (FileSize))
 
-
-allElements = [fondos, mascaras, adornos, colores, ojos, bocas]
-
-# theImage.paste('separados/fondos/' + fondos[1], (0, 0), 'separados/fondos/' + fondos[1])
-ar = []
-for b in allElements:
-    ar.append(len(b))
-# print(ar)
-bigerArray = np.max(ar)
-smallerArray = np.min(ar)
-
-# print('Chico y grande', smallerArray, bigerArray)
-mask = 0
-
-# files most be a list
-
-# def createLayer(first, second, file_size):
-#     for f in first:
-#         thisImage = Image.new('RGBA', (FileSize), (228, 150, 150))
-
-#         imageOriginal = Image.open('separados/adorno/'+f)
-#         imageF = Image.open('separados/adorno/'+f)
-#         datas = imageF.getdata()
-#         newData = []
-#         for item in datas:
-#             if item[0] == 13 and item[1] == 255 and item[2] == 0:
-#                 newData.append((255, 255, 255, 0))
-#             else:
-#                 newData.append(item)
-#         imageF.putdata(newData)  
-#         imageOriginalSize = imageOriginal.resize(file_size) 
-#         fSize = imageF.resize(file_size)
-#         for s in second:
-#             imageS = Image.open('separados/ojos/'+s)
-#             sSize = imageS.resize(file_size)
-#             # thisImage.paste(sSize, (0, 0), sSize) 
-#             thisImage.paste(sSize, (0, 0), imageOriginalSize) 
-#             thisImage.paste(fSize, (0, 0), fSize)
-#             thisImage.show()
-
-    
-# createLayer(adornos, ojos, FileSize)      
-
-fSize = None
-
+path = 'http://127.0.0.1:8000'
 
 def loadImage(image):
         imageSL = Image.open(image)
         fSize = imageSL.resize(FileSize)
         print(fSize)
         return fSize
-       
-
-# automatizar estos layers       
-# background = loadImage('separados/fondos/' + fondos[1])
-# mascara = loadImage('separados/mascaras/' + mascaras[1])
-
-
-
-
-
+  
 def createCompoundLayer(x, y): 
     compoundImage = Image.new('RGBA', (FileSize))
     layerX = loadImage(x)   
@@ -105,7 +55,6 @@ def createCompoundLayer(x, y):
     return compoundImage
 
 
-# createCompoundLayer()
 
 def createSimpleLayer(maskanfile, x, y):
     layerImage = Image.new('RGBA', (FileSize))
@@ -133,94 +82,138 @@ def createSimpleLayer(maskanfile, x, y):
 
  
     theImage.paste(layerImage, (0, 0), layerImage)
+    theImage.show()
 
 
 
-
-def createBase(file, file_size):
-    masks = []
-    maskMe = None
-    theFile = Image.open(file)
-    if file.find('_mask') != -1:
-        print('caracteristic')
-        datas = theFile.getdata()
-        newData = []
-        masks.append(theFile)
-        for item in datas:
-            if item[0] == 13 and item[1] == 255 and item[2] == 0:
-                newData.append((255, 255, 255, 0))
-            else:
-                newData.append(item)
-        theFile.putdata(newData)  
-   
-    theSize = theFile.resize(file_size)
-    with theSize as fileColors:
-        fileColors = fileColors.convert('RGB')
-    r, g, b = fileColors.split()
-    fileColors = Image.merge('RGB', (r, g, b))
-    theImage.paste(fileColors, (0, 0), theSize)
-
-i = 0
-
-aLists = []
-
-
-for a in allElements:
-    length = bigerArray
-    # newList = a[:]*bigerArray + a[:1]
-    newList = a[:]*bigerArray
-    # newList = newList[:length]
-    newList = a[:length]
-    
-    # newList
-    aLists.append(newList)
+def creatorNFT(layers, compound, group):
+    fullLayers = []
+    compounds = []
+    groups = [] 
+    img = []
+    # pass
+    for comp in compound:
+        # --------------
+        # --------------
+        print('compounds', comp.compound_name)
+        for c in comp.group_images.all():
+            print('combinations', c.groupImage_name)
+            for nurl in c.layer_images.all():
+                # createSimpleLayer(path + nurl.upload_img.url, path + nurl.upload_img.url, path + nurl.upload_img.url)
+                print ('URL', nurl.upload_img.url)
 
 
 
-a = 0
-b = 0
-c = 0
-d = 0
-
-for aL in range(smallerArray):
-
-  
-    
-    for aL in aLists[2]:
-        if a >= len(aLists[0]):
-            a = 0
-           
-            background = loadImage('separados/fondos/'+aLists[0][a])
-            theImage.paste(background, (0, 0), background)
-
-        else:    
-         
-            background = loadImage('separados/fondos/'+aLists[0][a])
-            theImage.paste(background, (0, 0), background)
-
-        if b >= len(aLists[1]):
-            b = 0    
-          
-            mascara = loadImage('separados/mascaras/'+aLists[1][b])
-            theImage.paste(mascara, (0, 0), mascara)
-        else:
+    for lay in layers:        
+        # setattr(fi, str(lay), str(lay.compound.all()))
+        # layers.append('{')
+        # stringed = str(lay)
+        # layers.append(stringed)
         
-            mascara = loadImage('separados/mascaras/'+aLists[1][b])
-            theImage.paste(mascara, (0, 0), mascara)
+        fullLayers.append(lay.layer_name )
 
 
 
-        b += 1
+        # lay = layers
+        # print('layers:', layers, '|||||||')
+        for la in lay.compound.all():
+            fullLayers.append(la.compound_name )
+            # setattr(fi, str(la), str(la.group_images.all()))
+            # print(' compound:', la, '|||')
+            for l in la.group_images.all():
+                fullLayers.append(l.groupImage_name )
+                # print('     group:', l, '|||')
+                for i in l.layer_images.all():
+                    fullLayers.append(i.upload_img.url)
+
+                    # print('         img:', i.upload_img.url)
+                    # print('         img:', i.rarity)
+                # leparate = layers.index(l)
+                # print('0003:', '\n', layers[leparate:])
+
+            # laparate = layers.index(la)
+            # img.append(layers[laparate:])
+            # img.append('|')
+            
+            # print('0004:', '\n', layers[laparate:], '\n')
+
+        separate = fullLayers.index(lay.layer_name)
+        img.append(fullLayers[separate:])
+
+        # layers.append('}')
+        # print('layers:', '\n', layers)
+
+    
+    # print('separate', separate)
+    # print('0001:', '\n', layers[:separate])
+    # print('0002:', '\n', layers[separate:])
+
+    # print(layers)
+    # a = img[0][0]
+    print('\n', img, '\n', len(img))
+    # print('\n', img.index('cuerpo'), '\n')
+    # print('\n', a, type(a), '\n')
+    fullList = []
+    for im in img:
+        temp1=[]
+        temp2=[]
+        temp3=[]
+        temp4=[]
+        for i, jey in enumerate(im[:-1]):
+            # if jey == im[i+1]:
+            # temp1=[]   
+
+            if jey.find('/') and im[i+1].find('/') and im[i+2].find('/'):
+                temp1.append(im[i])
+                fullList.append(temp1) 
+            # else:
+            #     temp1=[]   
+            if jey.find('/') and im[i+1].find('/') and im[i-1].find('/'):
+                temp2.append(im[i])
+                temp1.append(temp2) 
+
+            # else:
+            #     temp1.append(temp2) 
+            #     temp2=[]     
+            if jey.find('/') and im[i+1].find('/')==-1 and im[i-1].find('/'):
+                temp3.append(im[i+1])  
+                temp2.append(temp3) 
+            # if jey.find('/') and im[i+1].find('/') and im[i-1].find('/'):
+            #     temp3.append(im[i+1])  
+            #     temp2.append(temp3) 
+            # if jey.find('/') and im[i+1].find('/')==-1 and im[i-1].find('/')==-1:
+            #     temp4.append(im[i+1])  
+            #     temp3.append(temp4) 
+            # else:
+            #     temp2.append(temp3) 
+            #     temp3=[]        
+            # if jey.find('/')!= -1 :
+            #     temp4.append(im[i])
+            #     temp3.append(temp4)     
+            # for e in i:
+                # print(e)
+            # if i.find('/') != -1:
+            #     temp2.append(i)
+                # print(temp2)
+                # if type(im) is list:
+                #     print(im, 'this is list')
+
+        # print('\n', temp1, '\n')
+        # print('\n', temp2, '\n')
+        # print('\n', temp3, '\n')
+
+    print('\n', '\n', fullList, '\n', '\n')
+
+
+
+    
+
+
+    # print('THEOBJECT', fullImage)
+    # print('layers:', '\n', layers)
   
 
-        createSimpleLayer('separados/adorno/'+aLists[2][c], 'separados/boca/'+aLists[5][c], 'separados/ojos/'+aLists[4][c])
 
-        c += 1
-        theImage.show()
-        theImage.save('test/imgtest00'+str(d)+'.png', 'PNG')
-        d += 1
-    a += 1
-    b = 0
-    c = 0
+
 
 
